@@ -9,8 +9,8 @@ This project requires the following Python packages:
 - `pillow==10.4.0`
 - `PyAutoGUI==0.9.54`
 - `pywin32==306`
-- `torch==2.2.0+cu118`
+- `torch==2.2.0`
 - `torchvision==0.19.1`
-- `torchaudio==2.0.1+cu118`
+- `torchaudio==2.0.1`
 
 pip install -r requirements.txt -f https://download.pytorch.org/whl/cu118/torch_stable.html
