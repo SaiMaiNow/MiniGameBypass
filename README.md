@@ -10,7 +10,7 @@ This project requires the following Python packages:
 - `PyAutoGUI==0.9.54`
 - `pywin32==306`
 - `torch==2.2.0+cu118`
-- `torchvision==0.17.2+cu118`
+- `torchvision==0.19.1`
 - `torchaudio==2.0.1+cu118`
 
 pip install -r requirements.txt -f https://download.pytorch.org/whl/cu118/torch_stable.html
