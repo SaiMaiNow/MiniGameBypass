@@ -2,7 +2,6 @@ import pyautogui
 import re
 import numpy as np
 from PIL import Image
-import numpy as np
 import os
 import time
 
@@ -24,6 +23,13 @@ def ReadImage(region, reader):
 
     return numbers
 
+def adjustRegion(region):
+    left, top, width, height = region
+    if width < 130:
+        width += 10  # Increase width by 10 units
+        return (left, top, min(width, 130), height)
+    return region
+
 def Electrical(reader):
     forcheckRegion = {
         1: (536, 799, 91, 130),
@@ -36,50 +42,66 @@ def Electrical(reader):
         8: (1291, 799, 91, 130),
     }
 
-    region = (664, 742, 86, 124) # (left, top, width, height)
+    region = (664, 742, 90, 130) # (left, top, width, height)
     checkMain = ReadImage(region, reader)
-    for key, r in forcheckRegion.items():
+    keys = list(forcheckRegion.keys())
+    index = 0
+    indexC = 0
+    while index < len(keys):
+        key = keys[index]
+        r = forcheckRegion[key]
         numbers = ReadImage(r, reader)
         if numbers:
-            fonudNum = False
-            for i in checkMain:    
-                print(numbers[0], i)        
+            foundNum = False
+            for i in checkMain:
+                print(numbers[0], i)
                 if i == numbers[0] :
                     print("--->")
-                    fonudNum = True
+                    foundNum = True
                     break
                 else:
                     print("<---")
-            if fonudNum:
+                    
+            if foundNum:
                 pyautogui.press('right')
             else:
                 pyautogui.press('left') 
+            
+            index += 1
+            indexC = 0
         else:
             print("Not Found!")
+            new_region = adjustRegion(r)
+            forcheckRegion[key] = new_region
+            indexC += 1
+            if indexC <= 20:
+                index += 1
         time.sleep(0.3)
-    os.system('cls')
 
-# def CompareColors(region):
-#     left, top, width, height = region
-#     screenshot = pyautogui.screenshot(region=(left, top, width, height))
-
-#     rgb = '#1986b4'
-
-#     img_np = np.array(screenshot)
-#     img_rgb = Image.fromarray(img_np, 'RGB')
-
-#     return 
-
-# def Electricboard():
-    # forcheckRegion = {
-    #     1: (739, 756, 43, 13),
-    #     2: (811, 758, 43, 13),
-    #     3: (880, 758, 43, 13),
-    #     4: (811, 677, 43, 13),
-    # }
 
     # for key, r in forcheckRegion.items():
-    #     ButtonOn = CompareColors(r)
+    #     numbers = ReadImage(r, reader)
+    #     if numbers:
+    #         fonudNum = False
+    #         for i in checkMain:    
+    #             print(numbers[0], i)        
+    #             if i == numbers[0] :
+    #                 print("--->")
+    #                 fonudNum = True
+    #                 break
+    #             else:
+    #                 print("<---")
+    #         if fonudNum:
+    #             pyautogui.press('right')
+    #         else:
+    #             pyautogui.press('left') 
+    #     else:
+    #         print("Not Found!")
+    #         new_region = adjust_region(r)
+    #         forcheckRegion[key] = new_region
 
-    #     if key == 1 & ButtonOn:
-    #         pyautogui.press('right')
+    #     time.sleep(0.3)
+    os.system('cls')
+
+def HomeRepairs():
+    print("HomeRepairs")
