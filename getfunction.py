@@ -46,7 +46,7 @@ def Electrical(reader):
     checkMain = ReadImage(region, reader)
     keys = list(forcheckRegion.keys())
     index = 0
-
+    indexC = 0
     while index < len(keys):
         key = keys[index]
         r = forcheckRegion[key]
@@ -68,10 +68,15 @@ def Electrical(reader):
                 pyautogui.press('left') 
             
             index += 1
+            indexC = 0
         else:
             print("Not Found!")
             new_region = adjustRegion(r)
             forcheckRegion[key] = new_region
+            indexC += 1
+            if indexC <= 20:
+                index += 1
+        time.sleep(0.3)
 
 
     # for key, r in forcheckRegion.items():
