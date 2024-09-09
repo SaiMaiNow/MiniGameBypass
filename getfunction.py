@@ -2,7 +2,6 @@ import pyautogui
 import re
 import numpy as np
 from PIL import Image
-import numpy as np
 import os
 import time
 
