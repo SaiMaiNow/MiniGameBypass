@@ -4,13 +4,18 @@ import time
 import winsound
 import win32api
 import sys
+import torch
+import warnings
+import ctypes
 
-from getfunction import Electrical
+from getfunction import Electrical, HomeRepairs
+
+warnings.filterwarnings('ignore')
 
 def Display():
     os.system('cls' if os.name == 'nt' else 'clear')
     printC("[+] 1. ElectricalRepair")
-    printM("[+] 2. Electricboard")
+    printM("[+] 2. HomeRepairs")
     printM("[+] 3. to Close...")
 
 def Display2(text):
@@ -57,11 +62,11 @@ def stated(reader):
         elif inputNum == 2:
             print("Found!")
             time.sleep(0.1)
-            Display2("Electricboard")
+            Display2("HomeRepairs")
             while True:
                 if isKeyPressed(0x14):
-                    # Electricboard()
-                    Display2("Electricboard")
+                    HomeRepairs()
+                    Display2("HomeRepairs")
                 elif isKeyPressed(0x58):
                     Display()
                     break
@@ -81,13 +86,35 @@ def stated(reader):
             sys.exit(0)
         time.sleep(0)
 
+def ProjectSetUp():
+    kernel32 = ctypes.WinDLL('kernel32', use_last_error=True)
+    user32 = ctypes.WinDLL('user32', use_last_error=True)
+    hwnd = kernel32.GetConsoleWindow()
+    if hwnd:
+        user32.SetWindowTextW(hwnd, "RCN first project")
+        user32.SetWindowLongW(hwnd, -20, user32.GetWindowLongW(hwnd, -20) | 0x80000) 
+        user32.SetLayeredWindowAttributes(hwnd, 0, 255, 0x00000001)
+        GWL_STYLE = -16
+        WS_MAXIMIZEBOX = 0x00010000
+        WS_THICKFRAME = 0x00040000
+        WS_SYSMENU = 0x00080000
+        WS_CAPTION = 0x00C00000
+        current_style = user32.GetWindowLongW(hwnd, GWL_STYLE)
+        user32.SetWindowLongW(hwnd, GWL_STYLE, current_style & ~WS_MAXIMIZEBOX & ~WS_THICKFRAME & ~WS_SYSMENU)
+        user32.SetWindowPos(hwnd, None, 100, 100, 800, 600, 0x0040)
+    else:
+        print("ERROR Hwnd")
+
 if __name__ == "__main__":
     os.system('cls')
+    ProjectSetUp()
     printC("Loading...")
     reader = easyocr.Reader(['en'], gpu=True)
     os.system('cls')
     winsound.Beep(750, 300)
-    printC("RCN loaded successfully.\n")
+    printC("RCN loaded successfully.")
+    printM(f"CUDA Available: {torch.cuda.is_available()}")
+    printM(f"Number of GPUs: {torch.cuda.device_count()}")
     time.sleep(1)
     print("Ok")
     time.sleep(0.7)
