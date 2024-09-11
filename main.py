@@ -2,74 +2,41 @@ import easyocr
 import os
 import time
 import winsound
-import win32api
 import sys
 import torch
 import warnings
 import ctypes
 
-from getfunction import Electrical, HomeRepairs
+from getfunction import Electrical, Farmer, printC, printM, isKeyPressed, Display
 
 warnings.filterwarnings('ignore')
 
-def Display():
-    os.system('cls' if os.name == 'nt' else 'clear')
-    printC("[+] 1. ElectricalRepair")
-    printM("[+] 2. HomeRepairs")
-    printM("[+] 3. to Close...")
-
-def Display2(text):
-    os.system('cls' if os.name == 'nt' else 'clear')
-    printC(f"Press [CapsLoack] {text}")
-    printM("Press [X] to Close...")
-
-def printC(text):
-    columns, rows = os.get_terminal_size()
-    text_length = len(text)
-    padding_horizontal = (columns - text_length) // 2
-    padding_vertical = (rows - 1) // 2 
-    centered_text = ' ' * padding_horizontal + text
-    for _ in range(padding_vertical):
-        print()
-    print(centered_text)
-
-def printM(text):
-    columns, _ = os.get_terminal_size()
-    text_length = len(text)
-    padding = (columns - text_length) // 2
-    centered_text = ' ' * padding + text
-    print(centered_text)
-
-def isKeyPressed(vk_code):
-    state = win32api.GetAsyncKeyState(vk_code)
-    return state & 0x8000 != 0
-
 def stated(reader):
-    Display()
     while True:
-        inputNum = int(input("Enter a number: "))
+        os.system('cls' if os.name == 'nt' else 'clear')
+        printC("[+] 1. ElectricalRepair")
+        printM("[+] 2. FarmerMake")
+        printM("[+] 3. to Close...")
+
+        try:
+            inputNum = int(input("Enter a number: "))
+        except ValueError:
+            print("Invalid input. Please enter a number.")
+            continue
+
         if inputNum == 1:
             print("Found!")
             time.sleep(0.1)
-            Display2("ElectricalRepair")
+            Display("ElectricalRepair")
             while True:
                 if isKeyPressed(0x14):
                     Electrical(reader)
-                    Display2("ElectricalRepair")
+                    Display("ElectricalRepair")
                 elif isKeyPressed(0x58):
-                    Display()
                     break
         elif inputNum == 2:
-            print("Found!")
             time.sleep(0.1)
-            Display2("HomeRepairs")
-            while True:
-                if isKeyPressed(0x14):
-                    HomeRepairs()
-                    Display2("HomeRepairs")
-                elif isKeyPressed(0x58):
-                    Display()
-                    break
+            Farmer(reader)
         elif inputNum == 3:
             for i in range(20):
                 print("ERROR")
@@ -91,7 +58,7 @@ def ProjectSetUp():
     user32 = ctypes.WinDLL('user32', use_last_error=True)
     hwnd = kernel32.GetConsoleWindow()
     if hwnd:
-        user32.SetWindowTextW(hwnd, "RCN first project")
+        user32.SetWindowTextW(hwnd, "RCN | first project")
         user32.SetWindowLongW(hwnd, -20, user32.GetWindowLongW(hwnd, -20) | 0x80000) 
         user32.SetLayeredWindowAttributes(hwnd, 0, 255, 0x00000001)
         GWL_STYLE = -16

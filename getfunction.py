@@ -4,6 +4,34 @@ import numpy as np
 from PIL import Image
 import os
 import time
+import win32api
+import math
+
+def Display(text):
+    os.system('cls' if os.name == 'nt' else 'clear')
+    printC(f"Press [CapsLoack] {text}")
+    printM("Press [X] to Close...")
+
+def printC(text):
+    columns, rows = os.get_terminal_size()
+    text_length = len(text)
+    padding_horizontal = (columns - text_length) // 2
+    padding_vertical = (rows - 1) // 2 
+    centered_text = ' ' * padding_horizontal + text
+    for _ in range(padding_vertical):
+        print()
+    print(centered_text)
+
+def printM(text):
+    columns, _ = os.get_terminal_size()
+    text_length = len(text)
+    padding = (columns - text_length) // 2
+    centered_text = ' ' * padding + text
+    print(centered_text)
+
+def isKeyPressed(vk_code):
+    state = win32api.GetAsyncKeyState(vk_code)
+    return state & 0x8000 != 0
 
 def ReadImage(region, reader):
     left, top, width, height = region
@@ -28,7 +56,7 @@ def adjustRegion(region):
     if width < 130:
         width += 10  # Increase width by 10 units
         return (left, top, min(width, 130), height)
-    return region
+    return False
 
 def Electrical(reader):
     forcheckRegion = {
@@ -46,7 +74,6 @@ def Electrical(reader):
     checkMain = ReadImage(region, reader)
     keys = list(forcheckRegion.keys())
     index = 0
-    indexC = 0
     while index < len(keys):
         key = keys[index]
         r = forcheckRegion[key]
@@ -68,40 +95,90 @@ def Electrical(reader):
                 pyautogui.press('left') 
             
             index += 1
-            indexC = 0
         else:
             print("Not Found!")
             new_region = adjustRegion(r)
-            forcheckRegion[key] = new_region
-            indexC += 1
-            if indexC <= 20:
-                index += 1
-        time.sleep(0.3)
-
-
-    # for key, r in forcheckRegion.items():
-    #     numbers = ReadImage(r, reader)
-    #     if numbers:
-    #         fonudNum = False
-    #         for i in checkMain:    
-    #             print(numbers[0], i)        
-    #             if i == numbers[0] :
-    #                 print("--->")
-    #                 fonudNum = True
-    #                 break
-    #             else:
-    #                 print("<---")
-    #         if fonudNum:
-    #             pyautogui.press('right')
-    #         else:
-    #             pyautogui.press('left') 
-    #     else:
-    #         print("Not Found!")
-    #         new_region = adjust_region(r)
-    #         forcheckRegion[key] = new_region
-
-    #     time.sleep(0.3)
+            if new_region:
+                forcheckRegion[key] = new_region
+            else:
+                break
+        time.sleep(0.2)
     os.system('cls')
 
-def HomeRepairs():
-    print("HomeRepairs")
+# def calculateTargetDirection(target):
+#     x, y, width, height = target
+#     target_x = x + width // 2
+#     target_y = y + height // 2
+    
+#     screen_width, screen_height = pyautogui.size()
+#     center_x, center_y = screen_width // 2, screen_height // 2
+    
+#     delta_x = target_x - center_x
+#     delta_y = target_y - center_y
+
+#     angle_rad = math.atan2(delta_y, delta_x)
+
+#     angle_deg = math.degrees(angle_rad)
+
+#     if angle_deg < 0:
+#         angle_deg += 360
+    
+#     return angle_deg
+
+# def moveMousetoDirection(target_direction, current_direction):
+#     direction_diff = target_direction - current_direction
+
+#     if direction_diff > 180:
+#         direction_diff -= 360
+#     elif direction_diff < -180:
+#         direction_diff += 360
+    
+#     screen_width, screen_height = pyautogui.size()
+#     center_x, center_y = screen_width // 2, screen_height // 2
+#     sensitivity = 10
+    
+#     if abs(direction_diff) > 0:
+#         move_amount = sensitivity * (direction_diff / 180)
+#         if direction_diff > 0:
+#             pyautogui.moveRel(move_amount, 0, duration=0.1)  # Move right
+#         else:
+#             pyautogui.moveRel(-move_amount, 0, duration=0.1)  # Move left
+
+def Farmer(reader):
+    while True:
+        os.system('cls' if os.name == 'nt' else 'clear')
+        printC("[+] 1. Woodcutting")
+        printM("[+] 2. to Close...")
+
+        try:
+            inputNum = int(input("Enter a number: "))
+        except ValueError:
+            print("Invalid input. Please enter a number.")
+            continue
+
+        if inputNum == 1:
+            Display("Woodcutting")
+            while True:
+                if isKeyPressed(0x14):
+                    os.system('cls' if os.name == 'nt' else 'clear')
+                    printC("Press [X] to StopAutoFarm...")
+
+                    # targetDirection = [232, 121, 48, 292]
+                    # while True:
+                    #     for target in targetDirection:
+                    #         region = (938, 69, 46, 30) # (left, top, width, height)
+                    #         currentDirection  = ReadImage(region, reader)
+
+                    #         if currentDirection is not None:
+                    #            for target in targetDirection:
+                    #                 target_direction = calculateTargetDirection((target, target, 48, 292))
+                    #                 moveMousetoDirection(target_direction, currentDirection)
+
+                    #     if isKeyPressed(0x58):
+                    #         break
+                elif isKeyPressed(0x58):
+                    break
+        elif inputNum == 2:
+            break
+        else:
+            break
