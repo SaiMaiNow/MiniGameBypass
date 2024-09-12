@@ -67,3 +67,5 @@ if __name__ == "__main__":
 
     if region:
         print(f"กำหนดบริเวณที่เลือก: left={region[0]}, top={region[1]}, width={region[2]}, height={region[3]}")
+    else:
+        print("ไม่ได้เลือกบริเวณใด ๆ")

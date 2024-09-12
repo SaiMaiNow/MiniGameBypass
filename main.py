@@ -86,3 +86,4 @@ if __name__ == "__main__":
     print("Ok")
     time.sleep(0.7)
     os.system('cls')
+    stated(reader)

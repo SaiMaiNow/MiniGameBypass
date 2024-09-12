@@ -33,6 +33,15 @@ def isKeyPressed(vk_code):
     state = win32api.GetAsyncKeyState(vk_code)
     return state & 0x8000 != 0
 
+def listtoInteger(lst):
+    print(lst)
+    str_lst = map(str, lst)
+    joined_str = ''.join(str_lst)
+    result = int(joined_str)
+    
+    return result
+
+
 def ReadImage(region, reader):
     left, top, width, height = region
     screenshot = pyautogui.screenshot(region=(left, top, width, height))
@@ -105,44 +114,23 @@ def Electrical(reader):
         time.sleep(0.2)
     os.system('cls')
 
-# def calculateTargetDirection(target):
-#     x, y, width, height = target
-#     target_x = x + width // 2
-#     target_y = y + height // 2
-    
-#     screen_width, screen_height = pyautogui.size()
-#     center_x, center_y = screen_width // 2, screen_height // 2
-    
-#     delta_x = target_x - center_x
-#     delta_y = target_y - center_y
+def moveMousetoDirection(target_direction, current_direction):
+    print(target_direction, current_direction)
+    direction_diff = target_direction - current_direction
 
-#     angle_rad = math.atan2(delta_y, delta_x)
-
-#     angle_deg = math.degrees(angle_rad)
-
-#     if angle_deg < 0:
-#         angle_deg += 360
+    if direction_diff > 180:
+        direction_diff -= 360
+    elif direction_diff < -180:
+        direction_diff += 360
     
-#     return angle_deg
-
-# def moveMousetoDirection(target_direction, current_direction):
-#     direction_diff = target_direction - current_direction
-
-#     if direction_diff > 180:
-#         direction_diff -= 360
-#     elif direction_diff < -180:
-#         direction_diff += 360
-    
-#     screen_width, screen_height = pyautogui.size()
-#     center_x, center_y = screen_width // 2, screen_height // 2
-#     sensitivity = 10
-    
-#     if abs(direction_diff) > 0:
-#         move_amount = sensitivity * (direction_diff / 180)
-#         if direction_diff > 0:
-#             pyautogui.moveRel(move_amount, 0, duration=0.1)  # Move right
-#         else:
-#             pyautogui.moveRel(-move_amount, 0, duration=0.1)  # Move left
+    sensitivity = 10
+    if abs(direction_diff) > 0:
+        move_amount = sensitivity * (direction_diff / 180)
+        print(move_amount)
+        if direction_diff > 0:
+            pyautogui.moveRel(move_amount, 0, duration=0.1)  # Move right
+        else:
+            pyautogui.moveRel(-move_amount, 0, duration=0.1)  # Move left
 
 def Farmer(reader):
     while True:
@@ -163,19 +151,19 @@ def Farmer(reader):
                     os.system('cls' if os.name == 'nt' else 'clear')
                     printC("Press [X] to StopAutoFarm...")
 
-                    # targetDirection = [232, 121, 48, 292]
-                    # while True:
-                    #     for target in targetDirection:
-                    #         region = (938, 69, 46, 30) # (left, top, width, height)
-                    #         currentDirection  = ReadImage(region, reader)
+                    targetDirection = [232, 121, 48, 292]
+                    while True:
+                        for target in targetDirection:
+                            region = (909, 64, 113, 34) # (left, top, width, height)
+                            currentDirection  = ReadImage(region, reader)
+                            print(listtoInteger(currentDirection))
+                            if currentDirection:
+                                moveMousetoDirection(target, listtoInteger(currentDirection))
+                            else:
+                                break
 
-                    #         if currentDirection is not None:
-                    #            for target in targetDirection:
-                    #                 target_direction = calculateTargetDirection((target, target, 48, 292))
-                    #                 moveMousetoDirection(target_direction, currentDirection)
-
-                    #     if isKeyPressed(0x58):
-                    #         break
+                        if isKeyPressed(0x58):
+                            break
                 elif isKeyPressed(0x58):
                     break
         elif inputNum == 2:
