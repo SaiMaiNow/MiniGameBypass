@@ -163,6 +163,7 @@ def Farmer(reader):
                                 break
 
                         if isKeyPressed(0x58):
+                            Display("Woodcutting")
                             break
                 elif isKeyPressed(0x58):
                     break
